@@ -158,7 +158,8 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+# Allow the safe template
+!.env.example
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -218,3 +219,12 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Tests and tooling
+.pytest_cache/
+.ruff_cache/
+.coverage
+
+# Local databases and generated indexes
+chroma_db/
+vector_store/
