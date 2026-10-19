@@ -45,6 +45,7 @@ def test_ignores_unsupported_file_types(tmp_path):
 @pytest.mark.parametrize("folder", [
     ".git", ".venv", "venv", "node_modules", "__pycache__",
     "dist", "build", "target", ".next",
+    ".pytest_cache", ".mypy_cache", ".tox", ".idea", ".vscode",
 ])
 def test_skips_excluded_folders(tmp_path, folder):
     make_files(tmp_path, ["app.py", f"{folder}/hidden.py", f"src/{folder}/nested.py"])
