@@ -228,3 +228,4 @@ __marimo__/
 # Local databases and generated indexes
 chroma_db/
 vector_store/
+chroma_db_demo/

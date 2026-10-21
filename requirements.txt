@@ -1,0 +1,4 @@
+# Versions below are the ones this project was tested with (lower bounds).
+chromadb>=1.5
+fastembed>=0.9
+pytest>=8
