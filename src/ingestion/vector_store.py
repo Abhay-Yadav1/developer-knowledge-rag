@@ -143,8 +143,9 @@ class VectorStore:
                 file_type=meta["file_type"],
                 text=text,
                 # Chroma returns cosine DISTANCE (0 = identical).
-                # Similarity is easier to read: 1 - distance.
-                score=1.0 - distance,
+                # Similarity is easier to read: 1 - distance. Tiny floating
+                # point errors can give 1.0000002, so we clamp to [-1, 1].
+                score=max(-1.0, min(1.0, 1.0 - distance)),
             ))
         return results
 
