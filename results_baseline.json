@@ -1,0 +1,360 @@
+{
+  "summary": {
+    "questions": 18,
+    "answerable": 14,
+    "unanswerable": 4,
+    "k": 5,
+    "min_score": 0.5,
+    "hit_rate_at_1": 0.42857142857142855,
+    "hit_rate_at_3": 0.6428571428571429,
+    "hit_rate_at_k": 0.8571428571428571,
+    "mrr": 0.5702380952380953,
+    "precision_at_k": 0.3000000000000001,
+    "refusal_accuracy": 0.0
+  },
+  "sweep": [
+    {
+      "threshold": 0.3,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.42857142857142855
+    },
+    {
+      "threshold": 0.35,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.42857142857142855
+    },
+    {
+      "threshold": 0.4,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.42857142857142855
+    },
+    {
+      "threshold": 0.45,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.42857142857142855
+    },
+    {
+      "threshold": 0.5,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.42857142857142855
+    },
+    {
+      "threshold": 0.55,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.42857142857142855
+    },
+    {
+      "threshold": 0.6,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 0.5,
+      "balanced": 0.6785714285714286
+    },
+    {
+      "threshold": 0.65,
+      "hit_rate": 0.8571428571428571,
+      "mrr": 0.5702380952380953,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.9285714285714286
+    },
+    {
+      "threshold": 0.7,
+      "hit_rate": 0.7142857142857143,
+      "mrr": 0.5166666666666667,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.8571428571428572
+    },
+    {
+      "threshold": 0.75,
+      "hit_rate": 0.42857142857142855,
+      "mrr": 0.37142857142857144,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.7142857142857143
+    },
+    {
+      "threshold": 0.8,
+      "hit_rate": 0.2857142857142857,
+      "mrr": 0.2857142857142857,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.6428571428571428
+    }
+  ],
+  "questions": [
+    {
+      "id": "q01",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/query_validator.py"
+      ],
+      "top_files": [
+        "agents/query_validator.py",
+        "agents/query_validator.py",
+        "README.md",
+        "agents/query_validator.py",
+        "tests/test_complete_workflow.py"
+      ]
+    },
+    {
+      "id": "q02",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/schema_selector.py"
+      ],
+      "top_files": [
+        "agents/schema_selector.py",
+        "agents/schema_selector.py",
+        "agents/sql_generator.py",
+        "utils/few_examples.py",
+        "README.md"
+      ]
+    },
+    {
+      "id": "q03",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/sql_generator.py"
+      ],
+      "top_files": [
+        "agents/sql_generator.py",
+        "README.md",
+        "agents/sql_generator.py",
+        "backend/api.py",
+        "agents/sql_generator.py"
+      ]
+    },
+    {
+      "id": "q04",
+      "category": "code_behaviour",
+      "status": "HIT @3",
+      "expected_files": [
+        "agents/human_approval.py"
+      ],
+      "top_files": [
+        "main.py",
+        "main.py",
+        "agents/human_approval.py",
+        "agents/human_approval.py",
+        "tests/test_complete_workflow.py"
+      ]
+    },
+    {
+      "id": "q05",
+      "category": "code_behaviour",
+      "status": "HIT @5",
+      "expected_files": [
+        "agents/query_executor.py"
+      ],
+      "top_files": [
+        "main.py",
+        "main.py",
+        "tests/test_complete_workflow.py",
+        "tests/test_complete_workflow.py",
+        "agents/query_executor.py"
+      ]
+    },
+    {
+      "id": "q06",
+      "category": "code_behaviour",
+      "status": "HIT @4",
+      "expected_files": [
+        "database/connections.py"
+      ],
+      "top_files": [
+        "database/setup_db.py",
+        "database/test_con.py",
+        "database/test_connection.py",
+        "database/connections.py",
+        "main.py"
+      ]
+    },
+    {
+      "id": "q07",
+      "category": "setup",
+      "status": "HIT @5",
+      "expected_files": [
+        "database/setup_db.py"
+      ],
+      "top_files": [
+        "database/test_connection.py",
+        "tests/test_complete_workflow.py",
+        "agents/sql_generator.py",
+        "README.md",
+        "database/setup_db.py"
+      ]
+    },
+    {
+      "id": "q08",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "backend/api.py"
+      ],
+      "top_files": [
+        "backend/api.py",
+        "backend/api.py",
+        "render.yaml",
+        "config.py",
+        "backend/models.py"
+      ]
+    },
+    {
+      "id": "q09",
+      "category": "code_behaviour",
+      "status": "MISS (wrong files)",
+      "expected_files": [
+        "graphs/state1.py"
+      ],
+      "top_files": [
+        "graphs/complete_workflow.py",
+        "graphs/schema_workflow.py",
+        "graphs/complete_workflow.py",
+        "README.md",
+        "main.py"
+      ]
+    },
+    {
+      "id": "q10",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "graphs/complete_workflow.py",
+        "graphs/schema_workflow.py"
+      ],
+      "top_files": [
+        "graphs/complete_workflow.py",
+        "graphs/schema_workflow.py",
+        "README.md",
+        "main.py",
+        "README.md"
+      ]
+    },
+    {
+      "id": "q11",
+      "category": "setup",
+      "status": "HIT @2",
+      "expected_files": [
+        "render.yaml",
+        "README.md"
+      ],
+      "top_files": [
+        "frontend/README.md",
+        "render.yaml",
+        "backend/agent_service.py",
+        "backend/api.py",
+        "config.py"
+      ]
+    },
+    {
+      "id": "q12",
+      "category": "setup",
+      "status": "MISS (wrong files)",
+      "expected_files": [
+        "requirements.txt"
+      ],
+      "top_files": [
+        "README.md",
+        "agents/human_approval.py",
+        "backend/agent_service.py",
+        "README.md",
+        "config.py"
+      ]
+    },
+    {
+      "id": "q13",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "utils/few_examples.py"
+      ],
+      "top_files": [
+        "utils/few_examples.py",
+        "agents/sql_generator.py",
+        "utils/few_examples.py",
+        "README.md",
+        "agents/sql_generator.py"
+      ]
+    },
+    {
+      "id": "q14",
+      "category": "configuration",
+      "status": "HIT @2",
+      "expected_files": [
+        "config.py"
+      ],
+      "top_files": [
+        "backend/models.py",
+        "config.py",
+        "backend/api.py",
+        "graphs/state1.py",
+        "render.yaml"
+      ]
+    },
+    {
+      "id": "u01",
+      "category": "unanswerable",
+      "status": "WRONGLY ANSWERED",
+      "expected_files": [],
+      "top_files": [
+        "main.py",
+        "tests/test_complete_workflow.py",
+        "README.md",
+        "main.py",
+        "README.md"
+      ]
+    },
+    {
+      "id": "u02",
+      "category": "unanswerable",
+      "status": "WRONGLY ANSWERED",
+      "expected_files": [],
+      "top_files": [
+        "utils/few_examples.py",
+        "tests/test_complete_workflow.py",
+        "tests/test_complete_workflow.py",
+        "tests/test_complete_workflow.py",
+        "README.md"
+      ]
+    },
+    {
+      "id": "u03",
+      "category": "unanswerable",
+      "status": "WRONGLY ANSWERED",
+      "expected_files": [],
+      "top_files": [
+        "frontend/README.md",
+        "graphs/complete_workflow.py",
+        "frontend/README.md",
+        "render.yaml",
+        "frontend/README.md"
+      ]
+    },
+    {
+      "id": "u04",
+      "category": "unanswerable",
+      "status": "WRONGLY ANSWERED",
+      "expected_files": [],
+      "top_files": [
+        "agents/human_approval.py",
+        "backend/api.py",
+        "main.py",
+        "backend/api.py",
+        "graphs/state1.py"
+      ]
+    }
+  ]
+}

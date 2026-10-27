@@ -1,0 +1,25 @@
+{
+  "repository": "intelligent-db-query-agent",
+  "notes": "STARTER SET. The expected_files were guessed from file names, NOT from reading the code. Before trusting any score, open each expected file and confirm it really answers the question. Then rewrite questions in your own words and add more.",
+  "questions": [
+    {"id": "q01", "category": "code_behaviour", "question": "How does the query validator decide whether a generated SQL query is safe to run?", "expected_files": ["agents/query_validator.py"]},
+    {"id": "q02", "category": "code_behaviour", "question": "How does the schema selector pick which database tables are relevant to a question?", "expected_files": ["agents/schema_selector.py"]},
+    {"id": "q03", "category": "code_behaviour", "question": "How is the SQL query generated from the user's natural language question?", "expected_files": ["agents/sql_generator.py"]},
+    {"id": "q04", "category": "code_behaviour", "question": "What happens during the human approval step before a query is executed?", "expected_files": ["agents/human_approval.py"]},
+    {"id": "q05", "category": "code_behaviour", "question": "How is the approved SQL executed against the database and the results returned?", "expected_files": ["agents/query_executor.py"]},
+    {"id": "q06", "category": "code_behaviour", "question": "How does the application open a connection to the database?", "expected_files": ["database/connections.py"]},
+    {"id": "q07", "category": "setup", "question": "How is the sample database created and filled with data?", "expected_files": ["database/setup_db.py"]},
+    {"id": "q08", "category": "code_behaviour", "question": "Which HTTP endpoints does the backend API expose?", "expected_files": ["backend/api.py"]},
+    {"id": "q09", "category": "code_behaviour", "question": "What information is carried in the shared state that flows between workflow steps?", "expected_files": ["graphs/state1.py"]},
+    {"id": "q10", "category": "code_behaviour", "question": "How are the agent steps wired together into one LangGraph workflow?", "expected_files": ["graphs/complete_workflow.py", "graphs/schema_workflow.py"]},
+    {"id": "q11", "category": "setup", "question": "How is this application deployed to a hosting service?", "expected_files": ["render.yaml", "README.md"]},
+    {"id": "q12", "category": "setup", "question": "Which Python packages must be installed to run the project?", "expected_files": ["requirements.txt"]},
+    {"id": "q13", "category": "code_behaviour", "question": "What example question and SQL pairs are shown to the language model?", "expected_files": ["utils/few_examples.py"]},
+    {"id": "q14", "category": "configuration", "question": "Where are settings such as the model name and API keys loaded from?", "expected_files": ["config.py"]},
+
+    {"id": "u01", "category": "unanswerable", "question": "How does the system process credit card payments and refunds?", "expected_files": []},
+    {"id": "u02", "category": "unanswerable", "question": "Which machine learning model is trained to predict customer churn?", "expected_files": []},
+    {"id": "u03", "category": "unanswerable", "question": "How are Kubernetes pods autoscaled in production?", "expected_files": []},
+    {"id": "u04", "category": "unanswerable", "question": "How does the mobile app send push notifications to users?", "expected_files": []}
+  ]
+}
