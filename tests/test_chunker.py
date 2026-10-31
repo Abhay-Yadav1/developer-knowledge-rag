@@ -7,6 +7,7 @@ from src.ingestion.loader import Document
 
 
 def make_doc(text, path="src/app.py"):
+    """Build a Document with the given text and file path for a test."""
     return Document(file_path=path, text=text)
 
 
@@ -18,6 +19,7 @@ def numbered_lines(count, width=20):
 # ---- basic behaviour ------------------------------------------------------
 
 def test_short_file_becomes_one_chunk_with_correct_metadata():
+    """A short file stays in one chunk with accurate path, lines, type, and text."""
     chunks = chunk_document(make_doc("a = 1\nb = 2\nc = 3"))
 
     assert len(chunks) == 1
@@ -31,10 +33,12 @@ def test_short_file_becomes_one_chunk_with_correct_metadata():
 
 @pytest.mark.parametrize("text", ["", "\n\n", "   \n  \n"])
 def test_empty_or_blank_files_produce_no_chunks(text):
+    """Empty files and files containing only whitespace produce no chunks."""
     assert chunk_document(make_doc(text)) == []
 
 
 def test_windows_line_endings_are_handled():
+    """Windows newlines are normalized without leaving carriage returns."""
     chunks = chunk_document(make_doc("a = 1\r\nb = 2\r\n"))
 
     assert len(chunks) == 1
@@ -44,6 +48,7 @@ def test_windows_line_endings_are_handled():
 # ---- the most important property: line numbers must be truthful ----------
 
 def test_every_chunk_text_matches_its_line_range():
+    """Each chunk's text exactly matches the source lines in its metadata."""
     lines = numbered_lines(100)
     chunks = chunk_document(make_doc("\n".join(lines)), max_chars=300)
 
@@ -54,6 +59,7 @@ def test_every_chunk_text_matches_its_line_range():
 
 
 def test_every_non_blank_line_is_covered_by_some_chunk():
+    """Chunk ranges cover every non-blank source line, including around blanks."""
     lines = numbered_lines(60)
     lines[10] = ""   # sprinkle in some blank lines
     lines[30] = ""
@@ -69,6 +75,7 @@ def test_every_non_blank_line_is_covered_by_some_chunk():
 
 
 def test_chunks_respect_max_chars():
+    """Chunks stay within the character limit when individual lines fit."""
     lines = numbered_lines(80)
     chunks = chunk_document(make_doc("\n".join(lines)), max_chars=300)
 
@@ -78,6 +85,7 @@ def test_chunks_respect_max_chars():
 # ---- overlap and blank-line breaks ---------------------------------------
 
 def test_neighbouring_chunks_overlap_by_requested_lines():
+    """Adjacent chunks share the requested number of source lines."""
     lines = numbered_lines(50)
     chunks = chunk_document(make_doc("\n".join(lines)), max_chars=300, overlap_lines=2)
 
@@ -86,6 +94,7 @@ def test_neighbouring_chunks_overlap_by_requested_lines():
 
 
 def test_zero_overlap_means_no_repeated_lines():
+    """With overlap disabled, adjacent chunks cover consecutive line ranges."""
     lines = numbered_lines(50)
     chunks = chunk_document(make_doc("\n".join(lines)), max_chars=300, overlap_lines=0)
 
@@ -94,6 +103,7 @@ def test_zero_overlap_means_no_repeated_lines():
 
 
 def test_prefers_cutting_at_a_blank_line():
+    """When possible, a chunk boundary falls at a blank line between sections."""
     function_a = ["def a():"] + [f"    step_{i} = {i}" for i in range(8)]
     function_b = ["def b():"] + [f"    step_{i} = {i}" for i in range(8)]
     text = "\n".join(function_a + [""] + function_b)
@@ -109,6 +119,7 @@ def test_prefers_cutting_at_a_blank_line():
 # ---- edge cases -----------------------------------------------------------
 
 def test_single_line_longer_than_limit_does_not_loop_forever():
+    """An overlong line is kept intact and chunking continues with later lines."""
     text = "x" * 5000 + "\nshort line"
     chunks = chunk_document(make_doc(text), max_chars=100)
 
@@ -117,6 +128,7 @@ def test_single_line_longer_than_limit_does_not_loop_forever():
 
 
 def test_overlap_larger_than_chunk_still_terminates():
+    """Oversized overlap settings still make progress through the document."""
     lines = numbered_lines(30)
     chunks = chunk_document(make_doc("\n".join(lines)), max_chars=60, overlap_lines=10)
 
@@ -124,6 +136,7 @@ def test_overlap_larger_than_chunk_still_terminates():
 
 
 def test_results_are_repeatable():
+    """Chunking the same document with the same settings gives equal results."""
     doc = make_doc("\n".join(numbered_lines(70)))
 
     assert chunk_document(doc, max_chars=300) == chunk_document(doc, max_chars=300)
@@ -131,6 +144,7 @@ def test_results_are_repeatable():
 
 @pytest.mark.parametrize("kwargs", [{"max_chars": 0}, {"max_chars": -5}, {"overlap_lines": -1}])
 def test_invalid_settings_raise_clear_errors(kwargs):
+    """Nonpositive limits and negative overlap are rejected with ValueError."""
     with pytest.raises(ValueError):
         chunk_document(make_doc("a = 1"), **kwargs)
 
@@ -138,6 +152,7 @@ def test_invalid_settings_raise_clear_errors(kwargs):
 # ---- whole-repository integration ----------------------------------------
 
 def test_chunk_repository_end_to_end(tmp_path):
+    """Repository chunking includes eligible files and excludes ignored content."""
     (tmp_path / "src").mkdir()
     (tmp_path / "src" / "app.py").write_text("def hello():\n    return 1\n")
     (tmp_path / "README.md").write_text("# Title\n\nSome docs.")
@@ -152,6 +167,7 @@ def test_chunk_repository_end_to_end(tmp_path):
 
 
 def test_chunk_ids_are_unique(tmp_path):
+    """Chunk IDs remain unique when multiple files have similar line content."""
     (tmp_path / "a.py").write_text("\n".join(numbered_lines(100)))
     (tmp_path / "b.py").write_text("\n".join(numbered_lines(100)))
 
