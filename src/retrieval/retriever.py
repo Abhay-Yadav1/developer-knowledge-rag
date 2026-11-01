@@ -24,7 +24,7 @@ from src.ingestion.embedder import FastEmbedEmbedder, HashingEmbedder
 from src.ingestion.vector_store import VectorStore
 
 DEFAULT_K = 5
-DEFAULT_MIN_SCORE = 0.5  # a starting guess for bge-small; calibrate on your data!
+DEFAULT_MIN_SCORE = 0.65  # a starting guess for bge-small; calibrate on your data!
 
 
 @dataclass(frozen=True)
