@@ -210,11 +210,16 @@ def main(argv=None):
             "questions": [
                 {"id": r.id, "category": r.category, "status": question_status(r, args.min_score),
                  "expected_files": list(r.expected_files),
-                 "top_files": [c.file_path for c in r.candidates[:args.k]]}
+                 "best_score": max((c.score for c in r.candidates), default=None),
+                 "top_files": [c.file_path for c in r.candidates[:args.k]],
+                 "top": [{"file": c.file_path, "score": round(c.score, 4)}
+                         for c in r.candidates[:args.k]]}
                 for r in results
             ],
         }
-        Path(args.output).write_text(json.dumps(report, indent=2), encoding="utf-8")
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)   # create evaluation/results/ if missing
+        output_path.write_text(json.dumps(report, indent=2), encoding="utf-8")
         print(f"\nSaved numbers to {args.output}")
     return 0
 
