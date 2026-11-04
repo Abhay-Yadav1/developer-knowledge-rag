@@ -8,7 +8,7 @@ A local retrieval-augmented generation (RAG) application for searching software 
 - Loads readable UTF-8 text files, skipping files larger than 1 MB, files containing null bytes, and files that cannot be decoded as UTF-8.
 - Splits files into line-based chunks (1,000-character limit and two-line overlap by default), preferring blank-line boundaries and retaining inclusive source line numbers.
 - Embeds chunks locally with FastEmbed (`BAAI/bge-small-en-v1.5` by default) and stores vectors, text, and metadata in Chroma.
-- Retrieves the closest chunks and filters weak matches using a configurable similarity threshold.
+- Retrieves a wider vector candidate pool, reranks candidates with exact query-term overlap, and filters weak matches using a configurable cosine-similarity threshold.
 - Optionally sends retrieved context to Groq to generate an answer with citations to numbered evidence blocks.
 
 Filename filtering is a safety measure, not a general secret scanner: sensitive content in an ordinary supported file may still be indexed. Review the repository and discovery rules before indexing it.

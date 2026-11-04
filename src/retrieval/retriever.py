@@ -17,6 +17,7 @@ at the bottom of this file to look at real scores and tune it.
 """
 
 import argparse
+import re
 import sys
 from dataclasses import dataclass
 
@@ -25,6 +26,36 @@ from src.ingestion.vector_store import VectorStore
 
 DEFAULT_K = 5
 DEFAULT_MIN_SCORE = 0.65  # a starting guess for bge-small; calibrate on your data!
+_CANDIDATE_MULTIPLIER = 4
+
+
+def _terms(text):
+    """Tokenize natural-language terms while keeping code identifiers intact."""
+    return set(re.findall(r"[a-z0-9_]+", text.lower()))
+
+
+def _rerank(query, candidates):
+    """Use query term coverage as a small tie-break signal among vector hits.
+
+    Cosine scores remain untouched because they drive the calibrated relevance
+    threshold. The lexical signal only changes ordering when it is strong
+    enough to outweigh a small cosine-score difference.
+    """
+    query_terms = _terms(query)
+    if not query_terms:
+        return candidates
+
+    def rank(candidate):
+        content_terms = _terms(candidate.text)
+        path_terms = _terms(candidate.file_path)
+        coverage = len(query_terms & content_terms) / len(query_terms)
+        path_match = bool(query_terms & path_terms)
+        # Coverage helps exact identifiers and API names without changing the
+        # similarity score or making lexical-only matches pass the threshold.
+        combined = candidate.score + 0.08 * coverage + (0.02 if path_match else 0.0)
+        return combined, candidate.score
+
+    return sorted(candidates, key=rank, reverse=True)
 
 
 @dataclass(frozen=True)
@@ -64,7 +95,11 @@ class Retriever:
             raise ValueError("query must not be empty")
 
         # Questions use embed_query (not embed_documents): see embedder.py.
-        candidates = self._store.search(self._embedder.embed_query(query), k=self._k)
+        # Fetch a wider vector pool, then rerank it using exact words and code
+        # identifiers. This improves ordering while keeping work bounded.
+        pool_size = self._k * _CANDIDATE_MULTIPLIER
+        candidates = self._store.search(self._embedder.embed_query(query), k=pool_size)
+        candidates = _rerank(query, candidates)[:self._k]
 
         # Candidates arrive best-first, so both lists stay sorted.
         kept = [c for c in candidates if c.score >= self._min_score]
