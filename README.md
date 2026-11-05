@@ -11,6 +11,8 @@ A local retrieval-augmented generation (RAG) application for searching software 
 - Retrieves a wider vector candidate pool, reranks candidates with exact query-term overlap, and filters weak matches using a configurable cosine-similarity threshold.
 - Optionally sends retrieved context to Groq to generate an answer with citations to numbered evidence blocks.
 
+This is the project's basic end-to-end RAG pipeline: repository files are ingested, embedded and indexed; a query retrieves evidence; and an optional generator answers from that evidence. Retrieval evaluation is also available. The next planned learning step is **hybrid search**: combine dense vector results with sparse keyword results (such as BM25), then compare its performance with the current retriever using the evaluation question set.
+
 Filename filtering is a safety measure, not a general secret scanner: sensitive content in an ordinary supported file may still be indexed. Review the repository and discovery rules before indexing it.
 
 ## Setup
@@ -94,6 +96,18 @@ The report includes hit rate, mean reciprocal rank (MRR), precision at k, refusa
 
 [`results_baseline.json`](results_baseline.json) is a saved evaluation report. Its summary records 18 questions (14 answerable and 4 unanswerable); at threshold 0.5 it reports 0.86 hit rate at k=5, 0.57 MRR, 0.30 precision at k, and 0.00 refusal accuracy. The sweep suggests 0.65 for that particular run, but the small question set makes this a calibration reference rather than a general default.
 
+## Learning roadmap
+
+The project currently covers the basic pipeline and these syllabus topics:
+
+- Document loading, line-based chunking, and source metadata
+- Local embeddings and persistent vector storage
+- Dense similarity retrieval, a score threshold, and lightweight lexical reranking
+- Basic answer generation with retrieved evidence
+- Retrieval metrics and an evaluation question set
+
+The next step is **Module 5: Basic Retrieval Techniques**, beginning with hybrid search. Add sparse keyword retrieval (for example BM25), combine its ranked results with dense vector results, and evaluate both retrievers on the same questions. After that, explore MMR, then continue to the advanced retrieval techniques in Module 6. The current project does not yet implement BM25 hybrid retrieval or MMR.
+
 ## Ask a question
 
 After indexing with the default FastEmbed model, ask a question using the configured Groq API key:
@@ -159,4 +173,4 @@ Tests use temporary repositories and the hashing embedder, so they do not need t
 - [Chunking](docs/module-2-chunking.md)
 - [RAG implementation reference](docs/Rag_implementation.md)
 
-The current pipeline uses full index rebuilds rather than incremental updates. Hybrid keyword/vector retrieval, structure-aware chunking, retrieval evaluation, and deployment remain areas for future work.
+The current pipeline uses full index rebuilds rather than incremental updates. Structure-aware chunking and deployment remain future work. Hybrid keyword/vector retrieval is the next planned implementation step; retrieval evaluation is already available to measure its effect.
