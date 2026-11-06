@@ -2,12 +2,28 @@
 
 import pytest
 
-from src.ingestion.chunker import chunk_repository
+from src.ingestion.chunker import Chunk, chunk_repository
 from src.ingestion.embedder import HashingEmbedder
-from src.ingestion.indexer import index_repository, main
+from src.ingestion.indexer import embedding_text, index_repository, main
 from src.ingestion.vector_store import VectorStore
 
 MODEL = "hashing-embedder"
+
+
+class RecordingEmbedder:
+    """Wraps HashingEmbedder and records every text passed to embed_documents."""
+
+    def __init__(self):
+        self._inner = HashingEmbedder()
+        self.name = self._inner.name
+        self.embedded_texts = []
+
+    def embed_documents(self, texts):
+        self.embedded_texts.extend(texts)
+        return self._inner.embed_documents(texts)
+
+    def embed_query(self, text):
+        return self._inner.embed_query(text)
 
 
 @pytest.fixture
@@ -110,3 +126,57 @@ def test_command_line_tool_indexes_and_searches(repo, tmp_path, capsys):
     assert "Indexed" in output
     assert "src/auth.py" in output
     assert "super-secret" not in output
+
+
+# ---- path header (embedding_text) ----
+
+def test_embedding_text_formats_file_header():
+    chunk = Chunk("graphs/state1.py:1-5", "graphs/state1.py", 1, 5, "py", "class AgentState:\n    pass")
+
+    assert embedding_text(chunk) == "File: graphs/state1.py\nclass AgentState:\n    pass"
+    assert embedding_text(chunk, include_path=False) == "class AgentState:\n    pass"
+
+
+def test_embeds_path_header_but_stores_clean_chunk_text(repo, store):
+    recorder = RecordingEmbedder()
+
+    index_repository(repo, recorder, store)
+
+    assert any(t.startswith("File: src/auth.py\n") for t in recorder.embedded_texts)
+    results = store.search(recorder.embed_query("reset password"), k=10)
+    assert all(not r.text.startswith("File: ") for r in results)
+
+
+def test_path_header_can_be_switched_off(repo, store):
+    recorder = RecordingEmbedder()
+
+    index_repository(repo, recorder, store, include_path=False)
+
+    assert all(not t.startswith("File: ") for t in recorder.embedded_texts)
+
+
+def test_file_name_alone_makes_chunk_findable(tmp_path, embedder, store):
+    root = tmp_path / "name_only_repo"
+    root.mkdir()
+    # Body never mentions "requirements" or "dependencies"
+    (root / "requirements.txt").write_text("fastapi==0.110.0\nuvicorn==0.29.0\n")
+    (root / "notes.txt").write_text("meeting agenda for monday morning\n")
+
+    index_repository(root, embedder, store, include_path=True)
+
+    top = store.search(embedder.embed_query("requirements"), k=1)[0]
+    assert top.file_path == "requirements.txt"
+
+
+def test_cli_no_path_header_flag_disables_header(tmp_path, monkeypatch):
+    root = tmp_path / "cli_repo"
+    root.mkdir()
+    (root / "requirements.txt").write_text("fastapi==0.110.0\n")
+    db = tmp_path / "cli_no_header_db"
+    recorder = RecordingEmbedder()
+    monkeypatch.setattr("src.ingestion.indexer.HashingEmbedder", lambda: recorder)
+
+    main([str(root), "--db", str(db), "--demo-embedder", "--no-path-header"])
+
+    assert len(recorder.embedded_texts) == 1
+    assert not recorder.embedded_texts[0].startswith("File: ")

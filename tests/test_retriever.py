@@ -133,7 +133,7 @@ def test_command_line_tool_shows_scores_and_verdict(tmp_path, capsys):
     db = tmp_path / "db"
     index_repository(repo, HashingEmbedder(), VectorStore(db, embedding_model=MODEL))
 
-    code = main(["reset the user password", "--db", str(db), "--min-score", "0.3", "--demo-embedder"])
+    code = main(["reset the user password", "--db", str(db), "--min-score", "0.5", "--demo-embedder"])
 
     output = capsys.readouterr().out
     assert code == 0

@@ -27,7 +27,20 @@ from src.ingestion.vector_store import VectorStore
 _EMBED_BATCH_SIZE = 64
 
 
-def index_repository(repo_root, embedder, store, rebuild=True):
+def embedding_text(chunk, include_path=True):
+    """Build the text passed to the embedder for a single chunk.
+
+    When `include_path` is True (default), prepends `File: <file_path>\\n` so
+    questions that name a file or folder can match the vector even if the file
+    body never repeats its own name. The stored chunk.text in VectorStore stays
+    unchanged.
+    """
+    if include_path:
+        return f"File: {chunk.file_path}\n{chunk.text}"
+    return chunk.text
+
+
+def index_repository(repo_root, embedder, store, rebuild=True, include_path=True):
     """Chunk, embed and store every eligible file in `repo_root`.
 
     Args:
@@ -38,6 +51,8 @@ def index_repository(repo_root, embedder, store, rebuild=True):
             exactly matching the repository. That also removes chunks of files
             that were edited or deleted since the last run. (Smarter updates
             that only touch changed files are a planned later feature.)
+        include_path: if True (default), prepend the file path when computing
+            each chunk's embedding while keeping the stored chunk text clean.
 
     Returns:
         The number of chunks stored.
@@ -51,7 +66,8 @@ def index_repository(repo_root, embedder, store, rebuild=True):
 
     for start in range(0, len(chunks), _EMBED_BATCH_SIZE):
         batch = chunks[start:start + _EMBED_BATCH_SIZE]
-        vectors = embedder.embed_documents([chunk.text for chunk in batch])
+        texts = [embedding_text(chunk, include_path=include_path) for chunk in batch]
+        vectors = embedder.embed_documents(texts)
         store.add_chunks(batch, vectors)
 
     return len(chunks)
@@ -67,6 +83,8 @@ def main(argv=None):
     parser.add_argument("--k", type=int, default=3, help="number of results to show (default: 3)")
     parser.add_argument("--no-index", action="store_true",
                         help="skip indexing; only search an existing database")
+    parser.add_argument("--no-path-header", action="store_true",
+                        help="do not prepend 'File: <path>' when embedding chunks")
     parser.add_argument("--demo-embedder", action="store_true",
                         help="use the simple word-hashing embedder (no model download, not semantic)")
     args = parser.parse_args(argv)
@@ -75,7 +93,12 @@ def main(argv=None):
     store = VectorStore(args.db, embedding_model=embedder.name)
 
     if not args.no_index:
-        count = index_repository(args.repo, embedder, store)
+        count = index_repository(
+            args.repo,
+            embedder,
+            store,
+            include_path=not args.no_path_header,
+        )
         print(f"Indexed {count} chunks from {args.repo} into '{args.db}'")
 
     print(f"Database '{args.db}' holds {store.count()} chunks (model: {embedder.name})")
