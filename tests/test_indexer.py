@@ -154,7 +154,6 @@ def test_path_header_can_be_switched_off(repo, store):
 
     assert all(not t.startswith("File: ") for t in recorder.embedded_texts)
 
-
 def test_file_name_alone_makes_chunk_findable(tmp_path, embedder, store):
     root = tmp_path / "name_only_repo"
     root.mkdir()
@@ -166,7 +165,6 @@ def test_file_name_alone_makes_chunk_findable(tmp_path, embedder, store):
 
     top = store.search(embedder.embed_query("requirements"), k=1)[0]
     assert top.file_path == "requirements.txt"
-
 
 def test_cli_no_path_header_flag_disables_header(tmp_path, monkeypatch):
     root = tmp_path / "cli_repo"

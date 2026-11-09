@@ -60,7 +60,6 @@ def test_weak_matches_are_moved_to_rejected(embedder, store):
     assert {c.file_path for c in result.rejected} == {"billing.py", "README.md"}
     assert all(c.score < 0.5 for c in result.rejected)
 
-
 def test_threshold_is_inclusive(embedder, store):
     exact_text = "render the invoice as a pdf file for the customer"
     top_score = Retriever(embedder, store, k=1, min_score=-1).retrieve(exact_text).chunks[0].score
@@ -69,19 +68,16 @@ def test_threshold_is_inclusive(embedder, store):
 
     assert kept.found  # score == threshold counts as a pass
 
-
 def test_lowest_threshold_keeps_all_k_candidates(embedder, store):
     result = Retriever(embedder, store, k=3, min_score=-1.0).retrieve("anything at all")
 
     assert len(result.chunks) == 3
     assert result.rejected == []
 
-
 def test_k_limits_number_of_candidates(embedder, store):
     result = Retriever(embedder, store, k=2, min_score=-1.0).retrieve("server")
 
     assert len(result.chunks) + len(result.rejected) == 2
-
 
 def test_empty_store_returns_nothing_without_crashing(tmp_path, embedder):
     empty = VectorStore(tmp_path / "empty_db", embedding_model=MODEL)
