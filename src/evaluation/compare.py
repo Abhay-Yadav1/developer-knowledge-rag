@@ -8,12 +8,10 @@ Workflow for every experiment:
     3. python -m src.evaluation.runner <questions> --output results_new.json
     4. run this tool to see exactly what improved and what got worse
 """
-
 import argparse
 import json
 import sys
 from pathlib import Path
-
 
 def load_report(path):
     try:
