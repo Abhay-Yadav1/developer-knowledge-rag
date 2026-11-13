@@ -1,6 +1,5 @@
 """Indexer: run the whole ingestion pipeline for one repository.
-
-    discover -> load -> chunk -> embed -> store      (this file ties them together)
+    (this file ties them together)
 
 Usage from Python:
 
@@ -14,7 +13,6 @@ Usage from Python:
 
 Usage from the terminal: see the bottom of this file.
 """
-
 import argparse
 import sys
 
