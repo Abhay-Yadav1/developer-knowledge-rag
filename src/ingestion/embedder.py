@@ -1,5 +1,4 @@
-"""Embedders: turn text into vectors (lists of numbers).
-
+"""
 Pipeline so far:
 
     discover -> load -> chunk -> EMBED -> (store) -> (later) retrieve
@@ -62,7 +61,6 @@ class FastEmbedEmbedder:
     def embed_query(self, text):
         """Embed one question. Returns one vector."""
         return next(iter(self._model.query_embed(text))).tolist()
-
 
 class HashingEmbedder:
     """A tiny, model-free embedder for TESTS and offline demos.
