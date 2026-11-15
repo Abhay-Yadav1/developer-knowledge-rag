@@ -1,5 +1,4 @@
 """Loader: read the files found by file_discovery into memory.
-
 Pipeline so far:
 
     discover_files  ->  load_repository  ->  (next) chunk  ->  embed  ->  store
@@ -11,7 +10,6 @@ Because this is the first module that actually OPENS files, it is careful:
   * it skips files that are huge or look binary,
   * it never crashes the whole run because one file is unreadable.
 """
-
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -26,7 +24,7 @@ DEFAULT_MAX_FILE_BYTES = 1_000_000  # about 1 MB
 class Document:
     """One file's contents plus where it came from."""
 
-    file_path: str  # relative to the repository root, e.g. "src/app.py"
+    file_path: str  
     text: str
 
 
