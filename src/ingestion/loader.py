@@ -10,6 +10,8 @@ Because this is the first module that actually OPENS files, it is careful:
   * it skips files that are huge or look binary,
   * it never crashes the whole run because one file is unreadable.
 """
+
+
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,6 +19,7 @@ from src.ingestion.file_discovery import discover_files
 
 # Files larger than this are skipped. Giant generated or data files are rarely
 # useful for answering questions and would produce thousands of chunks.
+
 DEFAULT_MAX_FILE_BYTES = 1_000_000  # about 1 MB
 
 

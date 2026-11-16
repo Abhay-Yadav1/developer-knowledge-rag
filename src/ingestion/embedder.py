@@ -20,7 +20,6 @@ Why two methods? Many models treat a short QUESTION and a longer PASSAGE a bit
 differently (for example bge models add a hidden instruction to queries).
 Using the right method for each gives better search results.
 """
-
 import hashlib
 import math
 import re
@@ -37,8 +36,10 @@ class FastEmbedEmbedder:
     """
 
     def __init__(self, model_name=DEFAULT_MODEL_NAME, cache_dir=None):
+
         # Imported here (not at the top of the file) so that the rest of the
         # project, and its tests, can be used without fastembed installed.
+        
         from fastembed import TextEmbedding
 
         if cache_dir is None:
