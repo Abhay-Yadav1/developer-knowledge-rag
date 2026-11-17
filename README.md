@@ -28,7 +28,7 @@ python -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-The default FastEmbed model is downloaded the first time it is used (about 100–150 MB) and cached locally. Later runs can use the cached model offline. For the answer-generation command, install the optional Groq client and configure an API key:
+The default FastEmbed model is downloaded the first time it is used (about 100-150 MB) and cached locally. Later runs can use the cached model offline. For the answer-generation command, install the optional Groq client and configure an API key:
 
 ```bash
 python -m pip install groq
@@ -74,10 +74,10 @@ Hashing vectors are lexical, not semantic. When searching an existing index, use
 
 ## Retrieve evidence
 
-The retrieval CLI shows the candidate scores, source locations, and which chunks pass the similarity threshold. This is useful for checking whether the default threshold (0.5) suits your repository:
+The retrieval CLI shows the candidate scores, source locations, and which chunks pass the similarity threshold. This is useful for checking whether the default threshold (0.65) suits your repository:
 
 ```bash
-python -m src.retrieval.retriever "How does authentication work?" --db chroma_db --k 5 --min-score 0.5
+python -m src.retrieval.retriever "How does authentication work?" --db chroma_db --k 5 --min-score 0.65
 ```
 
 For a hashing-embedder index, add `--demo-embedder`. The threshold is a starting point and depends on the model and data; inspect real scores and adjust it as needed.
@@ -89,12 +89,20 @@ The evaluation runner compares retrieved chunks with expected repository files. 
 Run an evaluation against an index built from the repository that the questions describe:
 
 ```bash
-python -m src.evaluation.runner evaluation/questions_intelligent_db_query_agent.json --db chroma_db --k 5 --min-score 0.5 --output results.json
+python -m src.evaluation.runner evaluation/questions_intelligent_db_query_agent.json --db chroma_db --k 5 --min-score 0.65 --output results.json
 ```
 
-The report includes hit rate, mean reciprocal rank (MRR), precision at k, refusal accuracy for unanswerable questions, and a threshold sweep from 0.30 to 0.80. `--output` saves the summary, sweep, per-question verdicts, expected paths, and top retrieved paths as JSON. To evaluate a hashing-embedder index, add `--demo-embedder`; the embedder must match the one used to build the index. Results depend on the indexed repository and question set, so compare runs using the same inputs.
+The report includes hit rate at 1, 3, and k, mean reciprocal rank (MRR), precision at k, refusal accuracy for unanswerable questions, and a threshold sweep. `--output` saves the summary, sweep, per-question verdicts, expected paths, and top retrieved paths as JSON. To evaluate a hashing-embedder index, add `--demo-embedder`; the embedder must match the one used to build the index. Results depend on the indexed repository and question set, so compare runs using the same inputs.
 
-[`results_baseline.json`](results_baseline.json) is a saved evaluation report. Its summary records 18 questions (14 answerable and 4 unanswerable); at threshold 0.5 it reports 0.86 hit rate at k=5, 0.57 MRR, 0.30 precision at k, and 0.00 refusal accuracy. The sweep suggests 0.65 for that particular run, but the small question set makes this a calibration reference rather than a general default.
+[`evaluation/results/baseline.json`](evaluation/results/baseline.json) is a saved evaluation report. Its summary records 18 questions (14 answerable and 4 unanswerable). Treat it as a calibration example for that specific index and question set, not a general performance guarantee.
+
+Compare saved evaluation reports with:
+
+```bash
+python -m src.evaluation.compare evaluation/results/baseline.json evaluation/results/path_header.json
+```
+
+The comparison shows metric changes and per-question status changes. Compare runs made with the same repository, question set, and evaluation settings.
 
 ## Learning roadmap
 
@@ -153,7 +161,7 @@ src/retrieval/
   generator.py               Groq-based answer generation
 tests/                       Unit and integration tests
 src/evaluation/              Retrieval metrics and question-set evaluation CLI
-evaluation/                  Sample evaluation questions
+evaluation/                  Sample evaluation questions and saved reports under results/
 docs/                        Architecture, chunking, and RAG design notes
 ```
 
