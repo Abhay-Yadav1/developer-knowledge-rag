@@ -145,10 +145,8 @@ def sweep(results, k, thresholds=None):
         })
     return rows
 
-
 def recommend_threshold(rows):
     """Pick the row with the best balanced score (ties: the lowest threshold).
-
     Treat this as a SUGGESTION. With a small question set, look at the whole
     table and prefer a threshold in the middle of a good range.
     """
