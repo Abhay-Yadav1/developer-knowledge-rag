@@ -11,6 +11,8 @@ Saving results with --output lets you compare runs before and after a change
 (different chunking, a new embedding model, hybrid search...).
 """
 
+
+
 import argparse
 import json
 import sys
@@ -27,9 +29,11 @@ from src.evaluation.metrics import (
     refusal_accuracy,
     sweep,
 )
+
 from src.ingestion.embedder import FastEmbedEmbedder, HashingEmbedder
 from src.ingestion.vector_store import VectorStore
 from src.retrieval.retriever import DEFAULT_K, DEFAULT_MIN_SCORE, Retriever
+
 
 
 def load_questions(path):
@@ -69,6 +73,7 @@ def load_questions(path):
     if not any(q["expected_files"] for q in questions):
         raise ValueError("At least one question needs expected_files (an answerable question).")
     return questions
+
 
 
 def run_retrieval(questions, retriever):

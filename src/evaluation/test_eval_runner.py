@@ -18,7 +18,6 @@ from src.retrieval.retriever import Retriever
 
 MODEL = "hashing-embedder"
 
-
 def write_questions(path, questions):
     path.write_text(json.dumps({"questions": questions}), encoding="utf-8")
     return path
@@ -54,6 +53,9 @@ def test_accepts_files_saved_with_a_windows_bom(tmp_path):
     ([{"id": "u", "question": "Why?", "expected_files": []}], "answerable"),
     ([], "non-empty"),
 ])
+
+
+
 def test_invalid_question_files_give_clear_errors(tmp_path, questions, message):
     f = write_questions(tmp_path / "q.json", questions)
 
