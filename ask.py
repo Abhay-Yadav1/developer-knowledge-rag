@@ -27,11 +27,12 @@ def main():
     answer = generate_answer(query, context)
     print(answer)
     cited = sorted({int(n) for n in re.findall(r"\[(\d+)\]", answer)})
-    print("\nSources:")
-    for n in cited:
-       if 1 <= n <= len(retrieval_result.chunks):
-           c = retrieval_result.chunks[n - 1]
-           print(f"[{n}] {c.file_path} L{c.start_line}-L{c.end_line}")
+    if cited:  # Sirf tabhi Sources print karo jab answer mein kam se kam ek [n] citation ho
+        print("\nSources:")
+        for n in cited:
+            if 1 <= n <= len(retrieval_result.chunks):
+                c = retrieval_result.chunks[n - 1]
+                print(f"[{n}] {c.file_path} L{c.start_line}-L{c.end_line}")
 
 if __name__ == "__main__":
     main()
