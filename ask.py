@@ -4,6 +4,7 @@ from src.ingestion.vector_store import VectorStore
 from src.retrieval.retriever import Retriever, format_context
 from src.retrieval.generator import generate_answer
 import re
+
 def main():
     if len(sys.argv) < 2:
         print("Usage: python ask.py 'Your question here'")
@@ -12,6 +13,7 @@ def main():
     query = sys.argv[1]
     
     # 1. Initialize retrieval components
+
     embedder = FastEmbedEmbedder()
     store = VectorStore("chroma_db", embedding_model=embedder.name)
     retriever = Retriever(embedder, store)
@@ -21,6 +23,7 @@ def main():
     retrieval_result = retriever.retrieve(query)
     
     # 3. Format context and generate answer
+    
     context = format_context(retrieval_result)
     print("Generating answer...\n")
     
