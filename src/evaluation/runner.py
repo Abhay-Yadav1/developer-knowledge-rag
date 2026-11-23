@@ -32,7 +32,7 @@ from src.evaluation.metrics import (
 
 from src.ingestion.embedder import FastEmbedEmbedder, HashingEmbedder
 from src.ingestion.vector_store import VectorStore
-from src.retrieval.retriever import DEFAULT_K, DEFAULT_MIN_SCORE, Retriever
+from src.retrieval.retriever import DEFAULT_K, DEFAULT_MIN_SCORE, DEFAULT_MMR_LAMBDA, Retriever
 
 
 
@@ -190,6 +190,10 @@ def main(argv=None):
     parser.add_argument("--output", help="also save the numbers to this JSON file")
     parser.add_argument("--demo-embedder", action="store_true",
                         help="use the word-hashing embedder (must match how the db was indexed)")
+    parser.add_argument("--mmr", action="store_true",
+                        help="enable Maximal Marginal Relevance for diverse results")
+    parser.add_argument("--mmr-lambda", type=float, default=DEFAULT_MMR_LAMBDA,
+                        help=f"MMR relevance vs diversity trade-off (default: {DEFAULT_MMR_LAMBDA})")
     args = parser.parse_args(argv)
 
     try:
@@ -200,7 +204,14 @@ def main(argv=None):
             print(f"The database '{args.db}' is empty. Run src.ingestion.indexer first.")
             return 1
         # min_score=-1 keeps every candidate; thresholds are applied when scoring.
-        retriever = Retriever(embedder, store, k=args.k, min_score=-1.0)
+        retriever = Retriever(
+            embedder,
+            store,
+            k=args.k,
+            min_score=-1.0,
+            use_mmr=args.mmr,
+            mmr_lambda=args.mmr_lambda,
+        )
         results = run_retrieval(questions, retriever)
     except ValueError as error:
         print(f"Error: {error}")

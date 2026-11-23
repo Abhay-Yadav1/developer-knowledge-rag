@@ -11,8 +11,7 @@ This class is a thin wrapper. The rest of the project talks to OUR small
 interface (add_chunks / search / count / clear), not to Chroma directly, so
 Chroma could be swapped for another database without touching other code.
 """
-
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 import chromadb
 from chromadb.config import Settings
@@ -35,6 +34,9 @@ class SearchResult:
     file_type: str
     text: str
     score: float  # cosine similarity: 1.0 = same direction, 0 = unrelated
+    # repr=False taaki print karne par 384 numbers screen na bhar dein;
+    # compare=False taaki purane tests jahan embedding None hai break na hon.
+    embedding: tuple[float, ...] | None = field(default=None, repr=False, compare=False)
 
 
 class VectorStore:
@@ -115,25 +117,34 @@ class VectorStore:
                 ],
             )
 
-    def search(self, query_embedding, k=5):
+    def search(self, query_embedding, k=5, include_embeddings=False):
         """Return the `k` most similar chunks, best match first."""
         if k <= 0:
             raise ValueError("k must be greater than 0")
 
+        # MMR ko chunk ke vectors chahiye hote hain, par normal search ko nahi.
+        # Isliye sirf zaroorat padne par hi "embeddings" mangwate hain.
+        include = ["documents", "metadatas", "distances"]
+        if include_embeddings:
+            include.append("embeddings")
+
         response = self._collection.query(
             query_embeddings=[query_embedding],
             n_results=k,  # asking for more than exist is fine
-            include=["documents", "metadatas", "distances"],
+            include=include,
         )
 
+        # Agar embeddings nahi maange, toh har result ke liye None rakh do.
+        ids = response["ids"][0]
+        embeddings = response["embeddings"][0] if include_embeddings else [None] * len(ids)
+
         results = []
-        # Chroma supports several queries at once, so every field is a list of
-        # lists. We sent exactly one query, hence the [0].
-        for chunk_id, text, meta, distance in zip(
-            response["ids"][0],
+        for chunk_id, text, meta, distance, emb in zip(
+            ids,
             response["documents"][0],
             response["metadatas"][0],
             response["distances"][0],
+            embeddings,
         ):
             results.append(SearchResult(
                 chunk_id=chunk_id,
@@ -142,10 +153,9 @@ class VectorStore:
                 end_line=meta["end_line"],
                 file_type=meta["file_type"],
                 text=text,
-                # Chroma returns cosine DISTANCE (0 = identical).
-                # Similarity is easier to read: 1 - distance. Tiny floating
-                # point errors can give 1.0000002, so we clamp to [-1, 1].
                 score=max(-1.0, min(1.0, 1.0 - distance)),
+                # Chroma numpy array de sakta hai, usko clean Python tuple bana dete hain.
+                embedding=tuple(float(x) for x in emb) if emb is not None else None,
             ))
         return results
 

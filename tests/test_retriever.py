@@ -86,7 +86,32 @@ def test_empty_store_returns_nothing_without_crashing(tmp_path, embedder):
 
     assert not result.found
     assert result.best_score is None
+# ---- MMR (Maximal Marginal Relevance) ----
 
+def test_mmr_reduces_redundant_chunks(tmp_path, embedder):
+    store = VectorStore(tmp_path / "mmr_db", embedding_model=MODEL)
+    chunks = [
+        make_chunk("README.md", "reset user password and invalidate sessions", 1, 5),
+        # Bilkul same text doosre chunk mein (redundant!)
+        make_chunk("README.md", "reset user password and invalidate sessions", 6, 10),
+        # Thoda alag par relevant implementation chunk
+        make_chunk("auth.py", "def reset_password(user): clear token and session", 1, 10),
+    ]
+    store.add_chunks(chunks, embedder.embed_documents([c.text for c in chunks]))
+
+    # MMR off: dono identical README chunks top-2 mein aa jayenge
+    plain = Retriever(embedder, store, k=2, min_score=-1.0, use_mmr=False).retrieve("reset user password")
+    # MMR on (lambda=0.5): second slot mein duplicate README ki jagah auth.py aana chahiye
+    diverse = Retriever(embedder, store, k=2, min_score=-1.0, use_mmr=True, mmr_lambda=0.5).retrieve("reset user password")
+
+    assert [c.file_path for c in plain.chunks] == ["README.md", "README.md"]
+    assert set(c.file_path for c in diverse.chunks) == {"README.md", "auth.py"}
+
+
+@pytest.mark.parametrize("bad_lambda", [-0.1, 1.5])
+def test_invalid_mmr_lambda_is_rejected(embedder, store, bad_lambda):
+    with pytest.raises(ValueError):
+        Retriever(embedder, store, use_mmr=True, mmr_lambda=bad_lambda)
 
 @pytest.mark.parametrize("query", ["", "   ", "\n\t"])
 def test_blank_question_raises_clear_error(embedder, store, query):

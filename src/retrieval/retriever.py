@@ -20,19 +20,68 @@ import argparse
 import re
 import sys
 from dataclasses import dataclass
-
+import math
 from src.ingestion.embedder import FastEmbedEmbedder, HashingEmbedder
 from src.ingestion.vector_store import VectorStore
 
 DEFAULT_K = 5
 DEFAULT_MIN_SCORE = 0.65  # a starting guess for bge-small; calibrate on your data!
 _CANDIDATE_MULTIPLIER = 4
-
+DEFAULT_MMR_LAMBDA = 0.7  # 70% relevance + 30% diversity
 
 def _terms(text):
     """Tokenize natural-language terms while keeping code identifiers intact."""
     return set(re.findall(r"[a-z0-9_]+", text.lower()))
 
+def _cosine_similarity(vec_a, vec_b):
+    """Do vectors ke beech cosine similarity (-1 se 1) nikalta hai.
+
+    Formula: (A · B) / (||A|| * ||B||)
+    """
+    dot = sum(a * b for a, b in zip(vec_a, vec_b))
+    norm_a = math.sqrt(sum(a * a for a in vec_a))
+    norm_b = math.sqrt(sum(b * b for b in vec_b))
+    if norm_a == 0.0 or norm_b == 0.0:
+        return 0.0
+    return dot / (norm_a * norm_b)
+
+
+def _mmr_select(candidates, k, lambda_mult=DEFAULT_MMR_LAMBDA):
+    """Maximal Marginal Relevance: relevance aur diversity balance karke k chunks chunta hai.
+
+    Har step par us candidate ko chunta hai jiska score sabse zyada ho:
+        mmr = lambda * query_similarity - (1 - lambda) * max_similarity_to_already_selected
+    """
+    if not candidates or k <= 0:
+        return []
+
+    # Step 1: Sabse pehla slot hamesha top-ranked (most relevant) chunk ko milta hai.
+    selected = [candidates[0]]
+    remaining = list(candidates[1:])
+
+    # Step 2: Baaki (k - 1) slots ek-ek karke bharo.
+    while len(selected) < k and remaining:
+        best_idx = 0
+        best_mmr = float("-inf")
+
+        for idx, cand in enumerate(remaining):
+            # Ye candidate already selected chunks se kitna milta-julta (redundant) hai?
+            max_sim_to_selected = max(
+                _cosine_similarity(cand.embedding, chosen.embedding)
+                for chosen in selected
+            )
+            mmr_score = (
+                lambda_mult * cand.score
+                - (1.0 - lambda_mult) * max_sim_to_selected
+            )
+            if mmr_score > best_mmr:
+                best_mmr = mmr_score
+                best_idx = idx
+
+        # Jo winner mila usko selected mein daalo aur remaining se hatao.
+        selected.append(remaining.pop(best_idx))
+
+    return selected
 
 def _rerank(query, candidates):
     """Use query term coverage as a small tie-break signal among vector hits.
@@ -79,33 +128,52 @@ class RetrievalResult:
 
 
 class Retriever:
-    def __init__(self, embedder, store, k=DEFAULT_K, min_score=DEFAULT_MIN_SCORE):
+    def __init__(
+        self,
+        embedder,
+        store,
+        k=DEFAULT_K,
+        min_score=DEFAULT_MIN_SCORE,
+        use_mmr=False,
+        mmr_lambda=DEFAULT_MMR_LAMBDA,
+    ):
         if k <= 0:
             raise ValueError("k must be greater than 0")
         if not -1.0 <= min_score <= 1.0:
             raise ValueError("min_score must be between -1 and 1 (cosine similarity)")
+        if not 0.0 <= mmr_lambda <= 1.0:
+            raise ValueError("mmr_lambda must be between 0 and 1")
         self._embedder = embedder
         self._store = store
         self._k = k
         self._min_score = min_score
+        self._use_mmr = use_mmr
+        self._mmr_lambda = mmr_lambda
 
     def retrieve(self, query):
         """Find the chunks most relevant to `query`."""
         if not query or not query.strip():
             raise ValueError("query must not be empty")
 
-        # Questions use embed_query (not embed_documents): see embedder.py.
-        # Fetch a wider vector pool, then rerank it using exact words and code
-        # identifiers. This improves ordering while keeping work bounded.
+        # Wider pool fetch karo; agar MMR on hai toh Chroma se vectors bhi mangwao.
         pool_size = self._k * _CANDIDATE_MULTIPLIER
-        candidates = self._store.search(self._embedder.embed_query(query), k=pool_size)
-        candidates = _rerank(query, candidates)[:self._k]
+        candidates = self._store.search(
+            self._embedder.embed_query(query),
+            k=pool_size,
+            include_embeddings=self._use_mmr,
+        )
+        candidates = _rerank(query, candidates)
 
-        # Candidates arrive best-first, so both lists stay sorted.
+        # MMR on ho toh diverse k chunks chuno, warna normal top-k slice karo.
+        if self._use_mmr:
+            candidates = _mmr_select(candidates, k=self._k, lambda_mult=self._mmr_lambda)
+        else:
+            candidates = candidates[:self._k]
+
+        # Threshold filter bilkul pehle jaisa (pure cosine score par).
         kept = [c for c in candidates if c.score >= self._min_score]
         rejected = [c for c in candidates if c.score < self._min_score]
         return RetrievalResult(query=query, chunks=kept, rejected=rejected)
-
 
 def format_context(result):
     """Write the kept chunks as numbered evidence blocks.
