@@ -114,7 +114,7 @@ The project currently covers the basic pipeline and these syllabus topics:
 - Basic answer generation with retrieved evidence
 - Retrieval metrics and an evaluation question set
 
-The next step is **Module 5: Basic Retrieval Techniques**, beginning with hybrid search. Add sparse keyword retrieval (for example BM25), combine its ranked results with dense vector results, and evaluate both retrievers on the same questions. After that, explore MMR, then continue to the advanced retrieval techniques in Module 6. The current project does not yet implement BM25 hybrid retrieval or MMR.
+The next step is **Module 5: Basic Retrieval Techniques**. The retriever now supports optional Maximal Marginal Relevance (MMR) to balance query relevance with diversity among returned chunks; see [the learning audit](docs/learning-audit.md) for implementation notes. A possible next experiment is hybrid search: add sparse keyword retrieval (for example BM25), combine its ranked results with dense vector results, and evaluate the approaches on the same questions before continuing to the advanced retrieval techniques in Module 6.
 
 ## Ask a question
 
@@ -180,5 +180,6 @@ Tests use temporary repositories and the hashing embedder, so they do not need t
 - [Architecture](docs/module-1-architecture.md)
 - [Chunking](docs/module-2-chunking.md)
 - [RAG implementation reference](docs/Rag_implementation.md)
+- [Learning and code change audit](docs/learning-audit.md)
 
 The current pipeline uses full index rebuilds rather than incremental updates. Structure-aware chunking and deployment remain future work. Hybrid keyword/vector retrieval is the next planned implementation step; retrieval evaluation is already available to measure its effect.
