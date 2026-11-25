@@ -108,7 +108,7 @@ def main(argv=None):
             preview = result.text[:200].replace("\n", "\n    ")
             print(f"\n#{rank}  score {result.score:.3f}  "
                   f"{result.file_path} L{result.start_line}-L{result.end_line}")
-            print(f"    {preview}")
+            print(f"   {preview}")
 
 
 if __name__ == "__main__":

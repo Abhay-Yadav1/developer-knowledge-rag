@@ -135,6 +135,7 @@ def discover_files(repo_root):
 if __name__ == "__main__":
     # Quick manual check from the terminal:
     #   python -m src.ingestion.file_discovery C:\path\to\any\repo
+    
     import sys
 
     if len(sys.argv) != 2:
