@@ -23,6 +23,7 @@ from dataclasses import dataclass
 import math
 from src.ingestion.embedder import FastEmbedEmbedder, HashingEmbedder
 from src.ingestion.vector_store import VectorStore
+from src.retrieval.bm25 import BM25Index, rrf_fuse
 
 DEFAULT_K = 5
 DEFAULT_MIN_SCORE = 0.65  # a starting guess for bge-small; calibrate on your data!
@@ -38,6 +39,8 @@ def _cosine_similarity(vec_a, vec_b):
 
     Formula: (A · B) / (||A|| * ||B||)
     """
+    if vec_a is None or vec_b is None:
+        return 0.0
     dot = sum(a * b for a, b in zip(vec_a, vec_b))
     norm_a = math.sqrt(sum(a * a for a in vec_a))
     norm_b = math.sqrt(sum(b * b for b in vec_b))
@@ -136,6 +139,7 @@ class Retriever:
         min_score=DEFAULT_MIN_SCORE,
         use_mmr=False,
         mmr_lambda=DEFAULT_MMR_LAMBDA,
+        use_hybrid=False,
     ):
         if k <= 0:
             raise ValueError("k must be greater than 0")
@@ -149,28 +153,37 @@ class Retriever:
         self._min_score = min_score
         self._use_mmr = use_mmr
         self._mmr_lambda = mmr_lambda
+        self._use_hybrid = use_hybrid
+        # Hybrid on hone par hi Chroma se saare chunks load karke BM25 index banao.
+        self._bm25 = BM25Index(store.get_all_chunks()) if use_hybrid else None
 
     def retrieve(self, query):
         """Find the chunks most relevant to `query`."""
         if not query or not query.strip():
             raise ValueError("query must not be empty")
 
-        # Wider pool fetch karo; agar MMR on hai toh Chroma se vectors bhi mangwao.
+        # Step 1: Dense vector search (wider pool of k * 4)
         pool_size = self._k * _CANDIDATE_MULTIPLIER
         candidates = self._store.search(
             self._embedder.embed_query(query),
             k=pool_size,
             include_embeddings=self._use_mmr,
         )
-        candidates = _rerank(query, candidates)
 
-        # MMR on ho toh diverse k chunks chuno, warna normal top-k slice karo.
+        # Step 2: Hybrid on hai toh BM25 + RRF se merge karo; warna purana _rerank chalao.
+        if self._use_hybrid and self._bm25 is not None:
+            bm25_hits = self._bm25.search(query, k=pool_size)
+            candidates = rrf_fuse([candidates, bm25_hits])
+        else:
+            candidates = _rerank(query, candidates)
+
+        # Step 3: MMR on hai toh diverse k chunks chuno, warna top-k slice karo.
         if self._use_mmr:
             candidates = _mmr_select(candidates, k=self._k, lambda_mult=self._mmr_lambda)
         else:
             candidates = candidates[:self._k]
 
-        # Threshold filter bilkul pehle jaisa (pure cosine score par).
+        # Step 4: Threshold filter (pure cosine score par, taaki refusal accuracy 100% rahe).
         kept = [c for c in candidates if c.score >= self._min_score]
         rejected = [c for c in candidates if c.score < self._min_score]
         return RetrievalResult(query=query, chunks=kept, rejected=rejected)

@@ -180,3 +180,19 @@ def test_command_line_tool_reports_empty_database(tmp_path, capsys):
 
     assert code == 1
     assert "empty" in capsys.readouterr().out
+
+
+# ---- Hybrid Search (Vectors + BM25 + RRF) ----
+
+def test_hybrid_search_returns_relevant_chunk_and_preserves_threshold(embedder, store):
+    result = Retriever(
+        embedder, store, k=3, min_score=0.5, use_hybrid=True
+    ).retrieve("reset the user password")
+
+    assert result.found
+    assert result.chunks[0].file_path == "auth.py"
+    # Off-topic question hybrid mode mein bhi refuse hona chahiye
+    off_topic = Retriever(
+        embedder, store, k=3, min_score=0.5, use_hybrid=True
+    ).retrieve("quantum entanglement physics")
+    assert not off_topic.found

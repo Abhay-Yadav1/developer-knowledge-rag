@@ -1,0 +1,774 @@
+{
+  "summary": {
+    "questions": 18,
+    "answerable": 14,
+    "unanswerable": 4,
+    "k": 5,
+    "min_score": 0.65,
+    "hit_rate_at_1": 0.5,
+    "hit_rate_at_3": 0.7857142857142857,
+    "hit_rate_at_k": 0.7857142857142857,
+    "mrr": 0.630952380952381,
+    "precision_at_k": 0.31428571428571433,
+    "refusal_accuracy": 1.0
+  },
+  "sweep": [
+    {
+      "threshold": 0.3,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.39285714285714285
+    },
+    {
+      "threshold": 0.35,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.39285714285714285
+    },
+    {
+      "threshold": 0.4,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.39285714285714285
+    },
+    {
+      "threshold": 0.45,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.39285714285714285
+    },
+    {
+      "threshold": 0.5,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.0,
+      "balanced": 0.39285714285714285
+    },
+    {
+      "threshold": 0.55,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.25,
+      "balanced": 0.5178571428571428
+    },
+    {
+      "threshold": 0.6,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 0.75,
+      "balanced": 0.7678571428571428
+    },
+    {
+      "threshold": 0.65,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.630952380952381,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.8928571428571428
+    },
+    {
+      "threshold": 0.7,
+      "hit_rate": 0.7857142857142857,
+      "mrr": 0.7142857142857143,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.8928571428571428
+    },
+    {
+      "threshold": 0.75,
+      "hit_rate": 0.5,
+      "mrr": 0.4642857142857143,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.75
+    },
+    {
+      "threshold": 0.8,
+      "hit_rate": 0.21428571428571427,
+      "mrr": 0.21428571428571427,
+      "refusal_accuracy": 1.0,
+      "balanced": 0.6071428571428571
+    }
+  ],
+  "questions": [
+    {
+      "id": "q01",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/query_validator.py"
+      ],
+      "best_score": 0.8564869165420532,
+      "top_files": [
+        "agents/query_validator.py",
+        "README.md",
+        "README.md",
+        "agents/query_validator.py",
+        "agents/sql_generator.py"
+      ],
+      "top": [
+        {
+          "file": "agents/query_validator.py",
+          "score": 0.8565
+        },
+        {
+          "file": "README.md",
+          "score": 0.7935
+        },
+        {
+          "file": "README.md",
+          "score": 0.7521
+        },
+        {
+          "file": "agents/query_validator.py",
+          "score": 0.7765
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.74
+        }
+      ]
+    },
+    {
+      "id": "q02",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/schema_selector.py"
+      ],
+      "best_score": 0.8638181090354919,
+      "top_files": [
+        "agents/schema_selector.py",
+        "agents/schema_selector.py",
+        "agents/sql_generator.py",
+        "README.md",
+        "agents/sql_generator.py"
+      ],
+      "top": [
+        {
+          "file": "agents/schema_selector.py",
+          "score": 0.8638
+        },
+        {
+          "file": "agents/schema_selector.py",
+          "score": 0.7689
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.7483
+        },
+        {
+          "file": "README.md",
+          "score": 0.7185
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.7247
+        }
+      ]
+    },
+    {
+      "id": "q03",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/sql_generator.py"
+      ],
+      "best_score": 0.8580155372619629,
+      "top_files": [
+        "agents/sql_generator.py",
+        "README.md",
+        "agents/sql_generator.py",
+        "agents/sql_generator.py",
+        "backend/api.py"
+      ],
+      "top": [
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.858
+        },
+        {
+          "file": "README.md",
+          "score": 0.8192
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.801
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.7687
+        },
+        {
+          "file": "backend/api.py",
+          "score": 0.7599
+        }
+      ]
+    },
+    {
+      "id": "q04",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "agents/human_approval.py"
+      ],
+      "best_score": 0.7838164567947388,
+      "top_files": [
+        "agents/human_approval.py",
+        "README.md",
+        "agents/human_approval.py",
+        "main.py",
+        "tests/test_complete_workflow.py"
+      ],
+      "top": [
+        {
+          "file": "agents/human_approval.py",
+          "score": 0.7838
+        },
+        {
+          "file": "README.md",
+          "score": 0.7034
+        },
+        {
+          "file": "agents/human_approval.py",
+          "score": 0.7135
+        },
+        {
+          "file": "main.py",
+          "score": 0.7803
+        },
+        {
+          "file": "tests/test_complete_workflow.py",
+          "score": 0.7101
+        }
+      ]
+    },
+    {
+      "id": "q05",
+      "category": "code_behaviour",
+      "status": "HIT @2",
+      "expected_files": [
+        "agents/query_executor.py"
+      ],
+      "best_score": 0.7571313977241516,
+      "top_files": [
+        "README.md",
+        "agents/query_executor.py",
+        "agents/human_approval.py",
+        "agents/query_executor.py",
+        "agents/human_approval.py"
+      ],
+      "top": [
+        {
+          "file": "README.md",
+          "score": 0.7315
+        },
+        {
+          "file": "agents/query_executor.py",
+          "score": 0.7375
+        },
+        {
+          "file": "agents/human_approval.py",
+          "score": 0.7571
+        },
+        {
+          "file": "agents/query_executor.py",
+          "score": 0.7348
+        },
+        {
+          "file": "agents/human_approval.py",
+          "score": 0.7144
+        }
+      ]
+    },
+    {
+      "id": "q06",
+      "category": "code_behaviour",
+      "status": "MISS (wrong files)",
+      "expected_files": [
+        "database/connections.py"
+      ],
+      "best_score": 0.6967620849609375,
+      "top_files": [
+        "database/test_con.py",
+        "main.py",
+        "agents/sql_generator.py",
+        "agents/query_executor.py",
+        "config.py"
+      ],
+      "top": [
+        {
+          "file": "database/test_con.py",
+          "score": 0.6968
+        },
+        {
+          "file": "main.py",
+          "score": 0.6338
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.6466
+        },
+        {
+          "file": "agents/query_executor.py",
+          "score": 0.6673
+        },
+        {
+          "file": "config.py",
+          "score": 0.6435
+        }
+      ]
+    },
+    {
+      "id": "q07",
+      "category": "setup",
+      "status": "HIT @1",
+      "expected_files": [
+        "database/setup_db.py"
+      ],
+      "best_score": 0.7161738872528076,
+      "top_files": [
+        "database/setup_db.py",
+        "README.md",
+        "README.md",
+        "tests/test_complete_workflow.py",
+        "README.md"
+      ],
+      "top": [
+        {
+          "file": "database/setup_db.py",
+          "score": 0.7121
+        },
+        {
+          "file": "README.md",
+          "score": 0.7162
+        },
+        {
+          "file": "README.md",
+          "score": 0.6828
+        },
+        {
+          "file": "tests/test_complete_workflow.py",
+          "score": 0.7029
+        },
+        {
+          "file": "README.md",
+          "score": 0.6824
+        }
+      ]
+    },
+    {
+      "id": "q08",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "backend/api.py"
+      ],
+      "best_score": 0.7510689496994019,
+      "top_files": [
+        "backend/api.py",
+        "backend/api.py",
+        "backend/models.py",
+        "frontend/README.md",
+        "backend/agent_service.py"
+      ],
+      "top": [
+        {
+          "file": "backend/api.py",
+          "score": 0.7511
+        },
+        {
+          "file": "backend/api.py",
+          "score": 0.7169
+        },
+        {
+          "file": "backend/models.py",
+          "score": 0.6356
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.6421
+        },
+        {
+          "file": "backend/agent_service.py",
+          "score": 0.6338
+        }
+      ]
+    },
+    {
+      "id": "q09",
+      "category": "code_behaviour",
+      "status": "MISS (wrong files)",
+      "expected_files": [
+        "graphs/state1.py"
+      ],
+      "best_score": 0.7082565426826477,
+      "top_files": [
+        "graphs/schema_workflow.py",
+        "graphs/complete_workflow.py",
+        "main.py",
+        "graphs/complete_workflow.py",
+        "graphs/complete_workflow.py"
+      ],
+      "top": [
+        {
+          "file": "graphs/schema_workflow.py",
+          "score": 0.6914
+        },
+        {
+          "file": "graphs/complete_workflow.py",
+          "score": 0.6939
+        },
+        {
+          "file": "main.py",
+          "score": 0.6299
+        },
+        {
+          "file": "graphs/complete_workflow.py",
+          "score": 0.7083
+        },
+        {
+          "file": "graphs/complete_workflow.py",
+          "score": 0.6572
+        }
+      ]
+    },
+    {
+      "id": "q10",
+      "category": "code_behaviour",
+      "status": "HIT @1",
+      "expected_files": [
+        "graphs/complete_workflow.py",
+        "graphs/schema_workflow.py"
+      ],
+      "best_score": 0.7666323184967041,
+      "top_files": [
+        "graphs/schema_workflow.py",
+        "README.md",
+        "README.md",
+        "graphs/complete_workflow.py",
+        "main.py"
+      ],
+      "top": [
+        {
+          "file": "graphs/schema_workflow.py",
+          "score": 0.7499
+        },
+        {
+          "file": "README.md",
+          "score": 0.726
+        },
+        {
+          "file": "README.md",
+          "score": 0.7102
+        },
+        {
+          "file": "graphs/complete_workflow.py",
+          "score": 0.7666
+        },
+        {
+          "file": "main.py",
+          "score": 0.7166
+        }
+      ]
+    },
+    {
+      "id": "q11",
+      "category": "setup",
+      "status": "MISS (wrong files)",
+      "expected_files": [
+        "render.yaml",
+        "README.md"
+      ],
+      "best_score": 0.6815512180328369,
+      "top_files": [
+        "frontend/README.md",
+        "frontend/README.md",
+        "backend/agent_service.py",
+        "frontend/README.md",
+        "frontend/README.md"
+      ],
+      "top": [
+        {
+          "file": "frontend/README.md",
+          "score": 0.6816
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.6308
+        },
+        {
+          "file": "backend/agent_service.py",
+          "score": 0.678
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.6411
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.6232
+        }
+      ]
+    },
+    {
+      "id": "q12",
+      "category": "setup",
+      "status": "HIT @2",
+      "expected_files": [
+        "requirements.txt"
+      ],
+      "best_score": 0.7160449028015137,
+      "top_files": [
+        "README.md",
+        "requirements.txt",
+        "README.md",
+        "main.py",
+        "README.md"
+      ],
+      "top": [
+        {
+          "file": "README.md",
+          "score": 0.6975
+        },
+        {
+          "file": "requirements.txt",
+          "score": 0.716
+        },
+        {
+          "file": "README.md",
+          "score": 0.7071
+        },
+        {
+          "file": "main.py",
+          "score": 0.6774
+        },
+        {
+          "file": "README.md",
+          "score": 0.658
+        }
+      ]
+    },
+    {
+      "id": "q13",
+      "category": "code_behaviour",
+      "status": "HIT @2",
+      "expected_files": [
+        "utils/few_examples.py"
+      ],
+      "best_score": 0.7965053915977478,
+      "top_files": [
+        "agents/sql_generator.py",
+        "utils/few_examples.py",
+        "README.md",
+        "agents/sql_generator.py",
+        "agents/sql_generator.py"
+      ],
+      "top": [
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.7715
+        },
+        {
+          "file": "utils/few_examples.py",
+          "score": 0.7738
+        },
+        {
+          "file": "README.md",
+          "score": 0.7712
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.7965
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.733
+        }
+      ]
+    },
+    {
+      "id": "q14",
+      "category": "configuration",
+      "status": "HIT @3",
+      "expected_files": [
+        "config.py"
+      ],
+      "best_score": 0.7115117311477661,
+      "top_files": [
+        "README.md",
+        "agents/schema_selector.py",
+        "config.py",
+        "backend/api.py",
+        "frontend/README.md"
+      ],
+      "top": [
+        {
+          "file": "README.md",
+          "score": 0.666
+        },
+        {
+          "file": "agents/schema_selector.py",
+          "score": 0.6652
+        },
+        {
+          "file": "config.py",
+          "score": 0.7115
+        },
+        {
+          "file": "backend/api.py",
+          "score": 0.6855
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.6502
+        }
+      ]
+    },
+    {
+      "id": "u01",
+      "category": "unanswerable",
+      "status": "refused OK",
+      "expected_files": [],
+      "best_score": 0.5726240873336792,
+      "top_files": [
+        "README.md",
+        "main.py",
+        "backend/api.py",
+        "tests/test_complete_workflow.py",
+        "tests/test_complete_workflow.py"
+      ],
+      "top": [
+        {
+          "file": "README.md",
+          "score": 0.5589
+        },
+        {
+          "file": "main.py",
+          "score": 0.5726
+        },
+        {
+          "file": "backend/api.py",
+          "score": 0.537
+        },
+        {
+          "file": "tests/test_complete_workflow.py",
+          "score": 0.5323
+        },
+        {
+          "file": "tests/test_complete_workflow.py",
+          "score": 0.5333
+        }
+      ]
+    },
+    {
+      "id": "u02",
+      "category": "unanswerable",
+      "status": "refused OK",
+      "expected_files": [],
+      "best_score": 0.5463560819625854,
+      "top_files": [
+        "README.md",
+        "README.md",
+        "agents/sql_generator.py",
+        "tests/test_complete_workflow.py",
+        "README.md"
+      ],
+      "top": [
+        {
+          "file": "README.md",
+          "score": 0.5464
+        },
+        {
+          "file": "README.md",
+          "score": 0.5436
+        },
+        {
+          "file": "agents/sql_generator.py",
+          "score": 0.5163
+        },
+        {
+          "file": "tests/test_complete_workflow.py",
+          "score": 0.5458
+        },
+        {
+          "file": "README.md",
+          "score": 0.5372
+        }
+      ]
+    },
+    {
+      "id": "u03",
+      "category": "unanswerable",
+      "status": "refused OK",
+      "expected_files": [],
+      "best_score": 0.6227763891220093,
+      "top_files": [
+        "render.yaml",
+        "frontend/README.md",
+        "frontend/README.md",
+        "README.md",
+        "agents/schema_selector.py"
+      ],
+      "top": [
+        {
+          "file": "render.yaml",
+          "score": 0.6228
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.5899
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.6106
+        },
+        {
+          "file": "README.md",
+          "score": 0.5753
+        },
+        {
+          "file": "agents/schema_selector.py",
+          "score": 0.5597
+        }
+      ]
+    },
+    {
+      "id": "u04",
+      "category": "unanswerable",
+      "status": "refused OK",
+      "expected_files": [],
+      "best_score": 0.56116783618927,
+      "top_files": [
+        "frontend/README.md",
+        "frontend/README.md",
+        "backend/api.py",
+        "frontend/README.md",
+        "backend/api.py"
+      ],
+      "top": [
+        {
+          "file": "frontend/README.md",
+          "score": 0.5215
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.5176
+        },
+        {
+          "file": "backend/api.py",
+          "score": 0.5393
+        },
+        {
+          "file": "frontend/README.md",
+          "score": 0.4961
+        },
+        {
+          "file": "backend/api.py",
+          "score": 0.5612
+        }
+      ]
+    }
+  ]
+}

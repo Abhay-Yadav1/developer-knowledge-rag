@@ -194,6 +194,8 @@ def main(argv=None):
                         help="enable Maximal Marginal Relevance for diverse results")
     parser.add_argument("--mmr-lambda", type=float, default=DEFAULT_MMR_LAMBDA,
                         help=f"MMR relevance vs diversity trade-off (default: {DEFAULT_MMR_LAMBDA})")
+    parser.add_argument("--hybrid", action="store_true",
+                        help="enable Hybrid Search (Dense Vectors + BM25 via RRF)")
     args = parser.parse_args(argv)
 
     try:
@@ -211,6 +213,7 @@ def main(argv=None):
             min_score=-1.0,
             use_mmr=args.mmr,
             mmr_lambda=args.mmr_lambda,
+            use_hybrid=args.hybrid,
         )
         results = run_retrieval(questions, retriever)
     except ValueError as error:
