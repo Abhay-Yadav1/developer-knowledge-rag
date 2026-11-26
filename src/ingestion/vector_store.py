@@ -162,7 +162,27 @@ class VectorStore:
     def count(self):
         """Number of chunks currently stored."""
         return self._collection.count()
-
+    
+    def get_all_chunks(self):
+        """Chroma mein stored saare chunks wapas laata hai (BM25 index banane ke liye)."""
+        response = self._collection.get(include=["documents", "metadatas"])
+        results = []
+        for chunk_id, text, meta in zip(
+            response["ids"],
+            response["documents"],
+            response["metadatas"],
+        ):
+            results.append(SearchResult(
+                chunk_id=chunk_id,
+                file_path=meta["file_path"],
+                start_line=meta["start_line"],
+                end_line=meta["end_line"],
+                file_type=meta["file_type"],
+                text=text,
+                score=0.0,  # Abhi koi query nahi chali, isliye default score 0.0
+            ))
+        return results
+    
     def clear(self):
         """Remove every chunk (keeps the same collection name and settings)."""
         self._client.delete_collection(self._collection_name)
