@@ -196,3 +196,4 @@ def test_hybrid_search_returns_relevant_chunk_and_preserves_threshold(embedder, 
         embedder, store, k=3, min_score=0.5, use_hybrid=True
     ).retrieve("quantum entanglement physics")
     assert not off_topic.found
+

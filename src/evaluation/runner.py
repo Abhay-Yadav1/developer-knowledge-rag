@@ -196,6 +196,8 @@ def main(argv=None):
                         help=f"MMR relevance vs diversity trade-off (default: {DEFAULT_MMR_LAMBDA})")
     parser.add_argument("--hybrid", action="store_true",
                         help="enable Hybrid Search (Dense Vectors + BM25 via RRF)")
+    parser.add_argument("--multi-query", action="store_true",
+                        help="enable Multi-Query + RRF (RAG Fusion) using Groq")
     args = parser.parse_args(argv)
 
     try:
