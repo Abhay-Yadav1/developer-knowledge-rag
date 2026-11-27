@@ -15,7 +15,7 @@ IMPORTANT: the right min_score depends on the embedding model and on your
 data. The default below is only a starting guess. Use the command-line tool
 at the bottom of this file to look at real scores and tune it.
 """
-
+from src.retrieval.multi_query import generate_queries
 import argparse
 import re
 import sys
@@ -140,6 +140,8 @@ class Retriever:
         use_mmr=False,
         mmr_lambda=DEFAULT_MMR_LAMBDA,
         use_hybrid=False,
+        use_multi_query=False,
+        query_generator=None,
     ):
         if k <= 0:
             raise ValueError("k must be greater than 0")
@@ -154,7 +156,9 @@ class Retriever:
         self._use_mmr = use_mmr
         self._mmr_lambda = mmr_lambda
         self._use_hybrid = use_hybrid
-        # Hybrid on hone par hi Chroma se saare chunks load karke BM25 index banao.
+        self._use_multi_query = use_multi_query
+        # Default real Groq generator use hoga; pytest mein fake function pass kar sakte hain.
+        self._query_generator = query_generator or generate_queries
         self._bm25 = BM25Index(store.get_all_chunks()) if use_hybrid else None
 
     def retrieve(self, query):
@@ -162,19 +166,33 @@ class Retriever:
         if not query or not query.strip():
             raise ValueError("query must not be empty")
 
-        # Step 1: Dense vector search (wider pool of k * 4)
         pool_size = self._k * _CANDIDATE_MULTIPLIER
-        candidates = self._store.search(
-            self._embedder.embed_query(query),
-            k=pool_size,
-            include_embeddings=self._use_mmr,
-        )
 
-        # Step 2: Hybrid on hai toh BM25 + RRF se merge karo; warna purana _rerank chalao.
+        # Step 1: Dense vector search (Single query ya Multi-Query + RRF)
+        if self._use_multi_query:
+            queries = self._query_generator(query)
+            ranked_lists = [
+                self._store.search(
+                    self._embedder.embed_query(q),
+                    k=pool_size,
+                    include_embeddings=self._use_mmr,
+                )
+                for q in queries
+            ]
+            # RAG Fusion: sabhi query variants ke results ko RRF se merge karo
+            candidates = rrf_fuse(ranked_lists)
+        else:
+            candidates = self._store.search(
+                self._embedder.embed_query(query),
+                k=pool_size,
+                include_embeddings=self._use_mmr,
+            )
+
+        # Step 2: Hybrid on hai toh BM25 + RRF se merge karo; warna single-query par _rerank chalao.
         if self._use_hybrid and self._bm25 is not None:
             bm25_hits = self._bm25.search(query, k=pool_size)
             candidates = rrf_fuse([candidates, bm25_hits])
-        else:
+        elif not self._use_multi_query:
             candidates = _rerank(query, candidates)
 
         # Step 3: MMR on hai toh diverse k chunks chuno, warna top-k slice karo.
@@ -183,7 +201,7 @@ class Retriever:
         else:
             candidates = candidates[:self._k]
 
-        # Step 4: Threshold filter (pure cosine score par, taaki refusal accuracy 100% rahe).
+        # Step 4: Threshold filter (pure cosine score par).
         kept = [c for c in candidates if c.score >= self._min_score]
         rejected = [c for c in candidates if c.score < self._min_score]
         return RetrievalResult(query=query, chunks=kept, rejected=rejected)
