@@ -197,3 +197,21 @@ def test_hybrid_search_returns_relevant_chunk_and_preserves_threshold(embedder, 
     ).retrieve("quantum entanglement physics")
     assert not off_topic.found
 
+# ---- Multi-Query + RRF (RAG Fusion) ----
+
+def test_multi_query_fuses_results_from_variant_queries(embedder, store):
+    # Fake generator jo original question ke saath ek aur keyword-rich query deta hai
+    def fake_generator(q):
+        return [q, "render invoice pdf customer"]
+
+    result = Retriever(
+        embedder,
+        store,
+        k=3,
+        min_score=-1.0,
+        use_multi_query=True,
+        query_generator=fake_generator,
+    ).retrieve("billing document")
+
+    assert result.found
+    assert "billing.py" in [c.file_path for c in result.chunks]

@@ -216,6 +216,7 @@ def main(argv=None):
             use_mmr=args.mmr,
             mmr_lambda=args.mmr_lambda,
             use_hybrid=args.hybrid,
+            use_multi_query=args.multi_query,
         )
         results = run_retrieval(questions, retriever)
     except ValueError as error:
