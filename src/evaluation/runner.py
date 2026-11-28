@@ -207,7 +207,9 @@ def main(argv=None):
         if store.count() == 0:
             print(f"The database '{args.db}' is empty. Run src.ingestion.indexer first.")
             return 1
+
         # min_score=-1 keeps every candidate; thresholds are applied when scoring.
+        
         retriever = Retriever(
             embedder,
             store,
